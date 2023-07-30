@@ -29,7 +29,7 @@ from jinja2 import Template
 #     - source (TEXT): 検索元URL
 #     - query (TEXT): 検索時に使用したクエリ
 #     - num (INT): 検索でヒットした順番
-#     - search_engine (TEXT): 検出した検索エンジン
+#     - engine (TEXT): 検出した検索エンジン
 #     - module (TEXT): 当該レコードを追加したmodule
 CREATE_PAGES_TABLE_SQL = '''
     CREATE TABLE IF NOT EXISTS pages (
@@ -40,7 +40,7 @@ CREATE_PAGES_TABLE_SQL = '''
         source TEXT,
         query TEXT,
         num INT,
-        search_engine TEXT,
+        engine TEXT,
         module TEXT
     )
 '''
@@ -232,8 +232,11 @@ class Module(BaseModule, ThreadingMixin):
                 'source': sr['source_url'],
                 'query': query,
                 'num': sr['num'],
+                'engine': engine,
                 'module': self._modulename
             }
+
+            self.verbose(f"URL:{sr_url}")
 
             # pages
             self.insert(
