@@ -3,9 +3,13 @@
 # Copyright (c) 2023 Blacknon. All rights reserved.
 # Use of this source code is governed by an MIT license
 # that can be found in the LICENSE file.
-# NOTE:
-#   - 同じ検索エンジンに対してパラレルでクエリ投げると怒られそうなのでシングル実行とする
 # =======================================================
+
+"""searchengine_dorks.py
+
+全検索エンジンに対して処理を行うモジュール.
+また、本リポジトリ内全体で必要となる処理をまとめて実施させる(例: テーブル作成など).
+"""
 
 import os
 
@@ -23,8 +27,9 @@ from jinja2 import Template
 #     - source (TEXT): 検索元URL
 #     - query (TEXT): 検索時に使用したクエリ
 #     - num (INT): 検索でヒットした順番
+#     - search_engine (TEXT): 検出した検索エンジン
 #     - module (TEXT): 当該レコードを追加したmodule
-CREATE_PAGES_TABLE_SQL = '''\
+CREATE_PAGES_TABLE_SQL = '''
     CREATE TABLE IF NOT EXISTS pages (
         url TEXT NOT NULL,
         domain TEXT,
@@ -33,6 +38,7 @@ CREATE_PAGES_TABLE_SQL = '''\
         source TEXT,
         query TEXT,
         num INT,
+        search_engine TEXT,
         module TEXT
     )
 '''
@@ -72,6 +78,48 @@ DORKS_OPTIONS = (
         True,
         'Specify the number of search results to retrieve.'
     ),
+    # enable_baidu:
+    #     baidu.comからの検索を有効にする.
+    #     あまり中国への検索をすると面倒なことになるため、デフォルトでは無効としている.
+    (
+        'enable_baidu',
+        False,
+        True,
+        'Search from yahoo.co.jp'
+    ),
+    # enable_bing:
+    #     bing.comからの検索を有効にする
+    (
+        'enable_bing',
+        True,
+        True,
+        'Search from bing.com'
+    ),
+    # enable_duckduckgo:
+    #     duckduckgo.comからの検索を有効にする
+    (
+        'enable_duckduckgo',
+        True,
+        True,
+        'Search from duckduckgo.com'
+    ),
+    # enable_google:
+    #     google.comからの検索を有効にする.
+    #     なお、同一IPからのアクセス数が多いとReCaptchaに飛ばされる可能性が非常に高いためデフォルトでは無効としている.
+    (
+        'enable_google',
+        False,
+        True,
+        'Search from google.com'
+    ),
+    # enable_yahoo:
+    #     yahoo.co.jpからの検索を有効にする
+    (
+        'enable_yahoo',
+        True,
+        True,
+        'Search from yahoo.co.jp'
+    ),
 
 )
 
@@ -98,7 +146,7 @@ def template_expand(template_data: str, variables: dict):
 class Module(BaseModule):
     # metaデータ
     meta = {
-        'name': 'multiplue harvester from [bing.com](https://www.bing.com/).',
+        'name': 'multiplue harvester from Search Engines.',
         'author': 'blacknon - blacknon@orebibou.com',
         'version': '0.1',
         'description': '',
@@ -114,24 +162,27 @@ class Module(BaseModule):
         self.query(CREATE_PAGES_TABLE_SQL)
 
     def module_run(self, domains):
+        # 有効になっている検索エンジンを取得する
+        engines = list()
+        if self.options['enable_baidu']:
+            engines.append('baidu')
+        if self.options['enable_bing']:
+            engines.append('bing')
+        if self.options['enable_duckduckgo']:
+            engines.append('duckduckgo')
+        if self.options['enable_google']:
+            engines.append('google')
+        if self.options['enable_yahoo']:
+            engines.append('yahoo')
+
+        # 有効になっている検索エンジンがない場合はエラー
+        if len(engines) == 0:
+            self.error('There is no search destination specified.')
+
         # templateファイルを開き、データを取得する
         template_data = ""
         with open(self.options['querylist']) as fp:
             template_data = fp.read()
-
-        # search_engineを生成
-        search_engine = SearchEngine()
-        search_engine.set('bing')
-
-        # 2023/07/27時点ではen/usじゃないと一部クエリパラメータがうまく動作しないため決め打ち
-        search_engine.set_lang('en', 'us')
-
-        # optionsの指定
-        # seleniumの指定(browserはfirefoxで決めうち)
-        use_selenium: bool = self.options['use_selenium']
-        if use_selenium:
-            selenium_endpoint: str = self.options['selenium_endpoint']
-            search_engine.set_selenium(selenium_endpoint, 'firefox')
 
         for domain in domains:
             self.heading(domain, level=0)
@@ -144,34 +195,49 @@ class Module(BaseModule):
             query_list = query_data.splitlines()
 
             for query in query_list:
-                search_results = search_engine.search(
-                    query, maximum=self.options['num'])
+                for engine in engines:
+                    self.module_thread(engine, domain, query)
 
-                for sr in search_results:
-                    sr_url = sr['link']
+    def module_thread(self, search_engine, domain, query: str):
+        # search_engineを生成
+        search_engine = SearchEngine()
+        search_engine.set(search_engine)
 
-                    pages_data = {
-                        'url': sr_url,
-                        'domain': domain,
-                        'title': sr['title'],
-                        'text': sr['text'],
-                        'source': sr['source_url'],
-                        'query': query,
-                        'num': sr['num'],
-                        'module': self._modulename
-                    }
+        # optionsの指定
+        # seleniumの指定(browserはfirefoxで決めうち)
+        use_selenium: bool = self.options['use_selenium']
+        if use_selenium:
+            selenium_endpoint: str = self.options['selenium_endpoint']
+            search_engine.set_selenium(selenium_endpoint, 'firefox')
 
-                    # url
-                    self.do_info(sr_url)
+        search_results = search_engine.search(
+            query, maximum=self.options['num'])
 
-                    # pages
-                    self.insert(
-                        'pages',
-                        pages_data,
-                        unique_columns=['url']
-                    )
+        for sr in search_results:
+            sr_url = sr['link']
 
-                    # hosts
-                    self.insert_hosts(
-                        urlparse(sr_url).hostname
-                    )
+        # url
+        self.do_info(sr_url)
+
+        pages_data = {
+            'url': sr_url,
+            'domain': domain,
+            'title': sr['title'],
+            'text': sr['text'],
+            'source': sr['source_url'],
+            'query': query,
+            'num': sr['num'],
+            'module': self._modulename
+        }
+
+        # pages
+        self.insert(
+            'pages',
+            pages_data,
+            unique_columns=['url']
+        )
+
+        # hosts
+        self.insert_hosts(
+            urlparse(sr_url).hostname
+        )
