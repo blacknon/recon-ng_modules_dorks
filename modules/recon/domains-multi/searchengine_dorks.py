@@ -235,7 +235,7 @@ class Module(BaseModule, ThreadingMixin):
                 'module': self._modulename
             }
 
-            self.verbose(f"URL:{sr_url}")
+            self.verbose(f"Hit {engine} search: {sr_url}")
 
             # pages
             self.insert(
