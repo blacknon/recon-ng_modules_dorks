@@ -7,8 +7,7 @@
 
 """searchengine_dorks.py
 
-全検索エンジンに対して処理を行うモジュール.
-また、本リポジトリ内全体で必要となる処理をまとめて実施させる(例: テーブル作成など).
+検索エンジンに対し、ドメインをキーとした検索を行うためのモジュール.
 """
 
 import os
@@ -51,7 +50,7 @@ DORKS_OPTIONS = (
     #     検索エンジンに投げるクエリテンプレートファイルのPATH.
     (
         'querylist',
-        os.path.join(BaseModule.data_path, 'dork_template.txt'),
+        os.path.join(BaseModule.data_path, 'domain_template.txt'),
         True,
         'path to query template list file.'
     ),
