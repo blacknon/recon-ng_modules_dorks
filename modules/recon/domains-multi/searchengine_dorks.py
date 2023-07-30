@@ -14,6 +14,8 @@
 import os
 
 from recon.core.module import BaseModule
+from recon.mixins.threads import ThreadingMixin
+
 from pydork.engine import SearchEngine
 from urllib.parse import urlparse
 from jinja2 import Template
@@ -143,7 +145,7 @@ def template_expand(template_data: str, variables: dict):
     return result
 
 
-class Module(BaseModule):
+class Module(BaseModule, ThreadingMixin):
     # metaデータ
     meta = {
         'name': 'multiplue harvester from Search Engines.',
