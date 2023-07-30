@@ -7,13 +7,9 @@ A repository for Recon-ng modules that retrieve results from various search engi
 
 ## Modules
 
- | path                                                                                               | desicrition                                                             |
- |----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
- | [modules/recon/domains-multi/bing_dorks.py](modules/recon/domains-multi/bing_dorks.py)             | multiplue harvester from [bing.com](https://www.bing.com/).             |
- | [modules/recon/domains-multi/duckduckgo_dorks.py](modules/recon/domains-multi/duckduckgo_dorks.py) | multiplue harvester from [duckduckgo.com](https://www.duckduckgo.com/). |
- | [modules/recon/domains-multi/baidu_dorks.py](modules/recon/domains-multi/baidu_dorks.py)           | multiplue harvester from [baidu.com](https://www.baidu.com/).           |
- | [modules/recon/domains-multi/google_dorks.py](modules/recon/domains-multi/google_dorks.py)         | multiplue harvester from [google.com](https://www.google.com/).         |
- | [modules/recon/domains-multi/yahoo_dorks.py](modules/recon/domains-multi/yahoo_dorks.py)           | multiplue harvester from [yahoo.co.jp](https://www.yahoo.co.jp/).       |
+| path                                                                                                   | desicrition                              |
+|--------------------------------------------------------------------------------------------------------|------------------------------------------|
+| [modules/recon/domains-multi/searchengine_dorks.py](modules/recon/domains-multi/searchengine_dorks.py) | multiplue harvester from Search Engines. |
 
 
 ## Requirements
