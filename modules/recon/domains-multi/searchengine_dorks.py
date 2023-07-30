@@ -198,12 +198,15 @@ class Module(BaseModule, ThreadingMixin):
 
             for query in query_list:
                 for engine in engines:
-                    self.module_thread(engine, domain, query)
+                    try:
+                        self.module_thread(engine, domain, query)
+                    except Exception as e:
+                        self.alert(e)
 
-    def module_thread(self, search_engine, domain, query: str):
+    def module_thread(self, engine, domain, query: str):
         # search_engineを生成
         search_engine = SearchEngine()
-        search_engine.set(search_engine)
+        search_engine.set(engine)
 
         # optionsの指定
         # seleniumの指定(browserはfirefoxで決めうち)
@@ -212,7 +215,7 @@ class Module(BaseModule, ThreadingMixin):
             selenium_endpoint: str = self.options['selenium_endpoint']
             search_engine.set_selenium(selenium_endpoint, 'firefox')
 
-        if self.options['PROXY'] != "":
+        if self.options.get('PROXY') is not None:
             search_engine.set_proxy(self.options['PROXY'])
 
         search_results = search_engine.search(
@@ -221,28 +224,25 @@ class Module(BaseModule, ThreadingMixin):
         for sr in search_results:
             sr_url = sr['link']
 
-        # url
-        self.do_info(sr_url)
+            pages_data = {
+                'url': sr_url,
+                'domain': domain,
+                'title': sr['title'],
+                'text': sr['text'],
+                'source': sr['source_url'],
+                'query': query,
+                'num': sr['num'],
+                'module': self._modulename
+            }
 
-        pages_data = {
-            'url': sr_url,
-            'domain': domain,
-            'title': sr['title'],
-            'text': sr['text'],
-            'source': sr['source_url'],
-            'query': query,
-            'num': sr['num'],
-            'module': self._modulename
-        }
+            # pages
+            self.insert(
+                'pages',
+                pages_data,
+                unique_columns=['url']
+            )
 
-        # pages
-        self.insert(
-            'pages',
-            pages_data,
-            unique_columns=['url']
-        )
-
-        # hosts
-        self.insert_hosts(
-            urlparse(sr_url).hostname
-        )
+            # hosts
+            self.insert_hosts(
+                urlparse(sr_url).hostname
+            )
