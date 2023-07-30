@@ -210,6 +210,9 @@ class Module(BaseModule):
             selenium_endpoint: str = self.options['selenium_endpoint']
             search_engine.set_selenium(selenium_endpoint, 'firefox')
 
+        if self.options['PROXY'] != "":
+            search_engine.set_proxy(self.options['PROXY'])
+
         search_results = search_engine.search(
             query, maximum=self.options['num'])
 
