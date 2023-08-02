@@ -153,6 +153,10 @@ class Module(BaseModule, ThreadingMixin):
         'description': '',
         'options': DORKS_OPTIONS,
         'query': 'SELECT DISTINCT domain FROM domains WHERE domain IS NOT NULL',
+        'comments': (
+            'NOTE: Search subdomain SQL: `SELECT DISTINCT host FROM hosts WHERE host IS NOT NULL`. '
+            '      Search ip address SQL: `SELECT DISTINCT ip_address FROM hosts WHERE ip_address IS NOT NULL`. '
+        ),
         'dependencies': ['pydork'],
     }
 
