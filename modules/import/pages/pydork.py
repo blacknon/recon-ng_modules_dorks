@@ -21,13 +21,12 @@ class Module(BaseModule):
     meta = {
         'name': 'import from [pydork](https://github.com/blacknon/pydork) result json.',
         'author': 'blacknon - blacknon@orebibou.com',
-        'version': '0.1',
+        'version': '0.2',
         'description': '',
         'options': (
             ('filename', None, True, 'path and filename for list input'),
             ('domain', None, False, 'domain'),
         ),
-        'dependencies': ['pydork'],
     }
 
     def module_run(self):
@@ -64,6 +63,11 @@ class Module(BaseModule):
                                 'pages',
                                 pages_data
                             )
+
+            if self.options.get('domain') is not None:
+                self.insert_domains(
+                    self.options.get('domain')
+                )
 
         except Exception as e:
             self.error(e)

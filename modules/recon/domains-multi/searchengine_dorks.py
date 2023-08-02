@@ -232,17 +232,18 @@ class Module(BaseModule, ThreadingMixin):
                 'query': query,
                 'num': sr['num'],
                 'engine': engine,
-                'module': self._modulename
+                'module': "{0}({1})".format(self._modulename, engine)
             }
 
             self.verbose(f"Hit {engine} search: {sr_url}")
 
             # pages
-            self.insert(
+            rowcount = self.insert(
                 'pages',
                 pages_data,
                 unique_columns=['url']
             )
+            self._display(pages_data, rowcount)
 
             # hosts
             self.insert_hosts(

@@ -7,9 +7,10 @@ recon-ng_modules_dorks
 
 ## Modules
 
-| path                                                                                                   | desicrition                              |
-|--------------------------------------------------------------------------------------------------------|------------------------------------------|
-| [modules/recon/domains-multi/searchengine_dorks.py](modules/recon/domains-multi/searchengine_dorks.py) | multiplue harvester from Search Engines. |
+| path                                                                                                   | desicrition                                                           |
+|--------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| [modules/import/pages/pydork.py](modules/import/pages/pydork.py)                                       | import from [pydork](https://github.com/blacknon/pydork) result json. |
+| [modules/recon/domains-multi/searchengine_dorks.py](modules/recon/domains-multi/searchengine_dorks.py) | multiplue harvester from Search Engines.                              |
 
 
 ## Requirements
