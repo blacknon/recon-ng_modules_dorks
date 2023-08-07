@@ -58,6 +58,9 @@ class Module(BaseModule):
                             if self.options.get('domain') is not None:
                                 pages_data['domain'] = self.options.get(
                                     'domain')
+                            else:
+                                # TODO: urlからドメイン名を取得
+                                None
 
                             self.insert(
                                 'pages',
