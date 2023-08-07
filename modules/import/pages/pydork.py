@@ -61,7 +61,7 @@ class Module(BaseModule):
                                 pages_data['domain'] = self.options.get(
                                     'domain')
                             else:
-
+                                pages_data['domain'] = tld.get_fld(r['link'])
 
                             self.insert(
                                 'pages',

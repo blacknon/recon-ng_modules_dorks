@@ -16,7 +16,7 @@ class Module(BaseModule):
     meta = {
         'name': 'Reports the contents of the pages table to an xlsx file with separate sheets for each domain.',
         'author': 'blacknon@orebibou.com',
-        'version': '0.1',
+        'version': '0.2',
         'description': 'Reports the contents of the pages table to an xlsx file with separate sheets for each domain.',
         'options': (
             (
