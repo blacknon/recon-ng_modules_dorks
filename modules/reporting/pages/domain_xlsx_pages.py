@@ -6,8 +6,8 @@
 # =======================================================
 
 
-import xlsxwriter
 import os
+import xlsxwriter
 
 from recon.core.module import BaseModule
 
@@ -23,8 +23,11 @@ class Module(BaseModule):
                 'filename',
                 os.path.join(BaseModule.workspace, 'pages_report.xlsx'),
                 True,
-                'Output path.'
-            )
+                'output file path.'
+            ),
+        ),
+        'comments': (
+            ''
         ),
         'dependencies': ['XlsxWriter'],
     }
