@@ -68,3 +68,5 @@ class Module(BaseModule):
                 for r in range(0, len(pages)):
                     for c in range(0, len(pages[r])):
                         worksheet.write(r + 1, c, pages[r][c], cell_format)
+
+        self.output(f"All data written to '{filename}'.")
