@@ -54,15 +54,23 @@ class Module(BaseModule):
                 domain_list.append(domain_table_row[0])
 
             for domain in domain_list:
-                worksheet = workbook.add_worksheet(domain)
+                sheet_name = domain.split(":")[0]
+
+                if len(sheet_name) > 30:
+                    sheet_name = sheet_name[0:28]
+
+                worksheet = workbook.add_worksheet(sheet_name)
 
                 pages = self.query(
-                    'SELECT DISTINCT url, title, source FROM pages WHERE domain = ?', (domain))
+                    'SELECT DISTINCT url, title, TEXT, source FROM pages WHERE domain == ?',
+                    (domain,)
+                )
 
                 # headerを追記
                 header = [
                     'URL',
                     'TITLE',
+                    'TEXT',
                     'SOURCE',
                 ]
                 for h in range(0, len(header)):
