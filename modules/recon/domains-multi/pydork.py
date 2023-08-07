@@ -150,7 +150,7 @@ class Module(BaseModule, ThreadingMixin):
         'name': 'multiplue harvester from Search Engines.',
         'author': 'blacknon - blacknon@orebibou.com',
         'version': '0.2',
-        'description': '',
+        'description': 'multiplue harvester from Search Engines.',
         'options': DORKS_OPTIONS,
         'query': 'SELECT DISTINCT domain FROM domains WHERE domain IS NOT NULL',
         'comments': (
