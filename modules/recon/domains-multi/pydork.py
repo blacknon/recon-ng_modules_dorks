@@ -149,7 +149,7 @@ class Module(BaseModule, ThreadingMixin):
     meta = {
         'name': 'multiplue harvester from Search Engines.',
         'author': 'blacknon - blacknon@orebibou.com',
-        'version': '0.1',
+        'version': '0.2',
         'description': '',
         'options': DORKS_OPTIONS,
         'query': 'SELECT DISTINCT domain FROM domains WHERE domain IS NOT NULL',

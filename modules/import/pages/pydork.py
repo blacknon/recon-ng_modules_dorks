@@ -12,6 +12,7 @@
 """
 
 import json
+import tld
 
 from recon.core.module import BaseModule
 
@@ -27,6 +28,7 @@ class Module(BaseModule):
             ('filename', None, True, 'path and filename for list input'),
             ('domain', None, False, 'domain'),
         ),
+        'dependencies': ['tld'],
     }
 
     def module_run(self):
@@ -59,8 +61,7 @@ class Module(BaseModule):
                                 pages_data['domain'] = self.options.get(
                                     'domain')
                             else:
-                                # TODO: urlからドメイン名を取得
-                                None
+
 
                             self.insert(
                                 'pages',
